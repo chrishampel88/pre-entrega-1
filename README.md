@@ -57,3 +57,6 @@ El cliente captura errores reportados por los SDKs, como los de conexión o lím
 ## Nota
 
 Los SDKs y modelos deben estar habilitados en la cuenta correspondiente. Si OpenAI indica que no quedan créditos, la prueba real no podrá devolver texto hasta resolverlo.
+
+
+El modo demo permite observar una simulación de respuesta normal y streaming sin utilizar créditos de API. No prueba la conexión real ni el funcionamiento de los clientes OpenAI y Anthropic.

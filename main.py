@@ -7,7 +7,7 @@ import sys
 from dotenv import load_dotenv
 from pydantic import ValidationError
 from schemas import ChatMessage, ModelConfig, ModelResponse
-
+from typing import Any
 load_dotenv()
 
 
@@ -43,7 +43,7 @@ class AsyncLLMManager:
         conversacion = [
             m.model_dump() for m in mensajes if m.role != "system"
         ]
-        datos = {"messages": conversacion}
+        datos: dict[str, Any] = {"messages": conversacion}
         if sistema:
             datos["system"] = sistema
         return datos
@@ -76,7 +76,6 @@ class AsyncLLMManager:
             else:
                 respuesta = await self.cliente.messages.create(
                     model=self.modelo,
-                    temperature=config.temperature,
                     max_tokens=config.max_tokens,
                     **self._datos_anthropic(mensajes),
                 )
@@ -106,7 +105,6 @@ class AsyncLLMManager:
             else:
                 async with self.cliente.messages.stream(
                     model=self.modelo,
-                    temperature=config.temperature,
                     max_tokens=config.max_tokens,
                     **self._datos_anthropic(mensajes),
                 ) as stream:
@@ -121,7 +119,11 @@ class AsyncLLMManager:
 
 async def main():
     # Demo: permite verificar la estructura aunque no tengas créditos.
-    proveedor = sys.argv[1].lower() if len(sys.argv) > 1 else "demo"
+    proveedor = (
+    sys.argv[1]
+    if len(sys.argv) > 1
+    else os.getenv("LLM_PROVIDER", "demo")
+).lower()
     mensajes = [ChatMessage(role="user", content="¿Qué es la entropía? Respondé breve.")]
     config = ModelConfig(temperature=0.7, max_tokens=200)
 
